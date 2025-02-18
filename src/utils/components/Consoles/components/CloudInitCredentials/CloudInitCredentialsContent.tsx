@@ -26,14 +26,14 @@ const CloudInitCredentialsContent: FC<CloudInitCredentialsContentProps> = ({ vm 
         <>
           {acc.passwords}
           <InlineCodeClipboardCopy
-            clipboardText={user?.password?.concat(String.fromCharCode(13))}
+            clipboardText={user?.password?.concat(String.fromCharCode(10))}
           />
         </>
       ),
       usernames: (
         <>
           {acc.usernames}
-          <InlineCodeClipboardCopy clipboardText={user?.name?.concat(String.fromCharCode(13))} />
+          <InlineCodeClipboardCopy clipboardText={user?.name?.concat(String.fromCharCode(10))} />
         </>
       ),
     }),
