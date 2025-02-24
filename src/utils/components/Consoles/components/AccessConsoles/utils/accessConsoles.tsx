@@ -1,6 +1,9 @@
 import { Dispatch, SetStateAction } from 'react';
 import { TFunction } from 'react-i18next';
 
+import { KeyboardLayout } from '@kubevirt-ui/vnc-keymaps';
+import { ModalComponent } from '@kubevirt-utils/components/ModalProvider/ModalProvider';
+
 import {
   ConsoleState,
   DESKTOP_VIEWER_CONSOLE_TYPE,
@@ -15,7 +18,12 @@ export type AccessConsolesActions = {
   sendCtrlAlt1?: () => void;
   sendCtrlAlt2?: () => void;
   sendCtrlAltDel?: () => void;
-  sendPaste?: () => void;
+  sendPaste?: (params?: PasteParams) => void;
+};
+
+export type PasteParams = {
+  createModal: (modal: ModalComponent) => void;
+  selectedKeyboard: KeyboardLayout;
 };
 
 export type AccessConsolesProps = {
