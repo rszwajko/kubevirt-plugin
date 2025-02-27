@@ -8,10 +8,13 @@ import { isKeyboardLayout, KeyboardLayout } from '@kubevirt-utils/keyboard/types
 import {
   Button,
   ButtonVariant,
+  Divider,
   Dropdown,
+  DropdownGroup,
   DropdownItem,
   DropdownList,
   MenuToggle,
+  MenuToggleAction,
   MenuToggleElement,
   Select,
   SelectOption,
@@ -39,7 +42,8 @@ export const AccessConsoles: FC<AccessConsolesProps> = ({
   const [isOpenSelectType, setIsOpenSelectType] = useState<boolean>(false);
   const [isOpenSendKey, setIsOpenSendKey] = useState<boolean>(false);
   const [status, setStatus] = useState<string>();
-  const [selectedKeyboard, setSelectedKeyboard] = useState<KeyboardLayout>('en-us');
+  const defaultKeyboard: KeyboardLayout = 'en-us';
+  const [selectedKeyboard, setSelectedKeyboard] = useState<KeyboardLayout>(defaultKeyboard);
   const [isKeyboardSelectOpen, setIsKeyboardSelectOpen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -76,47 +80,76 @@ export const AccessConsoles: FC<AccessConsolesProps> = ({
     serialSocket?.destroy();
   };
 
+  const typeInLabel = t('Type into console ({{selectedKeyboard}})', { selectedKeyboard });
   return (
     <>
-      <Button
-        icon={
-          <>
-            <PasteIcon /> {isVnc ? t('Type into console') : t('Paste to console')}
-          </>
-        }
-        className="vnc-paste-button"
-        onClick={onInjectTextFromClipboard}
-        variant={ButtonVariant.link}
-      />
       {isVnc && (
-        <Select
+        <Dropdown
           onSelect={(_event, value?: number | string) => {
             isKeyboardLayout(value) && setSelectedKeyboard(value);
             setIsKeyboardSelectOpen(false);
           }}
           toggle={(toggleRef: Ref<MenuToggleElement>) => (
             <MenuToggle
+              splitButtonOptions={{
+                items: [
+                  <MenuToggleAction
+                    aria-label={typeInLabel}
+                    key={typeInLabel}
+                    onClick={onInjectTextFromClipboard}
+                  >
+                    <PasteIcon />
+                    {typeInLabel}
+                  </MenuToggleAction>,
+                ],
+                variant: 'action',
+              }}
+              className="vnc-paste-button"
               isExpanded={isKeyboardSelectOpen}
               onClick={() => setIsKeyboardSelectOpen(!isKeyboardSelectOpen)}
               ref={toggleRef}
+              variant="secondary"
             >
               {selectedKeyboard}
             </MenuToggle>
           )}
           isOpen={isKeyboardSelectOpen}
+          isScrollable
           onOpenChange={(isOpen) => setIsKeyboardSelectOpen(isOpen)}
           selected={selectedKeyboard}
           shouldFocusToggleOnSelect
         >
-          <SelectList>
-            {Object.keys(keyMaps).map((value) => (
-              <SelectOption key={value} value={value}>
-                {value}
-              </SelectOption>
-            ))}
-          </SelectList>
-        </Select>
+          <DropdownGroup>
+            <DropdownItem description={defaultKeyboard} value={defaultKeyboard}>
+              {keyMaps[defaultKeyboard].description}
+            </DropdownItem>
+          </DropdownGroup>
+          <Divider component="li" />
+          <DropdownList>
+            {Object.entries(keyMaps)
+              .filter(([value]) => value !== defaultKeyboard)
+              .sort(([, a], [, b]) => a.description.localeCompare(b.description))
+              .map(([value, def]) => (
+                <DropdownItem description={value} key={value} value={value}>
+                  {def.description}
+                </DropdownItem>
+              ))}
+          </DropdownList>
+        </Dropdown>
       )}
+      {!isVnc && (
+        <Button
+          icon={
+            <>
+              <PasteIcon /> {t('Paste to console')}
+            </>
+          }
+          className="vnc-paste-button"
+          onClick={onInjectTextFromClipboard}
+          variant={ButtonVariant.link}
+        />
+      )}
+
       <Select
         onSelect={(_, selection: string) => {
           setType(selection);

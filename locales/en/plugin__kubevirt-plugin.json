@@ -1340,7 +1340,7 @@
   "Total bytes": "Total bytes",
   "Total vCPU is {{totalCPU}}": "Total vCPU is {{totalCPU}}",
   "Type": "Type",
-  "Type into console": "Type into console",
+  "Type into console ({{selectedKeyboard}})": "Type into console ({{selectedKeyboard}})",
   "U series": "U series",
   "UEFI": "UEFI",
   "UEFI (secure)": "UEFI (secure)",

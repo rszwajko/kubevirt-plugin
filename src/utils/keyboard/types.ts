@@ -33,10 +33,11 @@ export type KeyMapping =
 export type KeyMap = KeyMapping[];
 
 export type KeyMapDef = {
-  l: string;
-  m?: string;
+  // country or language code
+  country: string;
+  description: string;
   map: KeyMap;
-  v?: string;
+  variant?: string;
 };
 
 export type CharMapping = {
