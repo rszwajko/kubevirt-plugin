@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import cn from 'classnames';
 
@@ -7,7 +6,11 @@ import { useModal } from '@kubevirt-utils/components/ModalProvider/ModalProvider
 import { useKubevirtTranslation } from '@kubevirt-utils/hooks/useKubevirtTranslation';
 import { resolveCharMapping } from '@kubevirt-utils/keyboard/keyboard';
 import { keyMaps } from '@kubevirt-utils/keyboard/keymaps/keymaps';
-import { CharMappingWithModifiers, KeyMapDef } from '@kubevirt-utils/keyboard/types';
+import {
+  CharMappingWithModifiers,
+  KeyboardLayout,
+  KeyMapDef,
+} from '@kubevirt-utils/keyboard/types';
 import { kubevirtConsole } from '@kubevirt-utils/utils/utils';
 import KeyTable from '@novnc/novnc/lib/input/keysym';
 import RFBCreate from '@novnc/novnc/lib/rfb';
@@ -97,7 +100,7 @@ export const VncConsole: FC<VncConsoleProps> = ({
         this.sendKey(KeyTable.XK_Alt_L, 'AltLeft', false);
         this.sendKey(KeyTable.XK_Control_L, 'ControlLeft', false);
       };
-      rfbInstnce.sendPasteCMD = async function sendPasteCMD(selectedKeyboard: string) {
+      rfbInstnce.sendPasteCMD = async function sendPasteCMD(selectedKeyboard: KeyboardLayout) {
         if (this._rfbConnectionState !== connected || this._viewOnly) {
           return;
         }
@@ -122,8 +125,11 @@ export const VncConsole: FC<VncConsoleProps> = ({
         }
 
         for (const toType of mappedChars) {
-          const { char, keysym, scanCode } = toType.mapping;
+          const { keysym, scanCode } = toType.mapping;
 
+          // qemu maintains virtual keyboard state (caps lock, shift, etc)
+          // keysyms are checked against that state and lower case version will be picked
+          // if there is no shift/caps lock turn on
           for (const modifier of toType.modifiers) {
             RFBCreate.messages.QEMUExtendedKeyEvent(
               this._sock,
@@ -131,12 +137,13 @@ export const VncConsole: FC<VncConsoleProps> = ({
               true,
               modifier.scanCode,
             );
-            console.log('Sending modifier', modifier);
             await sleep(50);
           }
+
           RFBCreate.messages.QEMUExtendedKeyEvent(this._sock, keysym, true, scanCode);
-          console.log('Sending char', char, keysym, scanCode);
+          // long text is getting truncated without a delay
           await sleep(50);
+
           for (const modifier of toType.modifiers) {
             RFBCreate.messages.QEMUExtendedKeyEvent(
               this._sock,
@@ -160,6 +167,7 @@ export const VncConsole: FC<VncConsoleProps> = ({
     scaleViewport,
     onConnect,
     pasteText,
+    createModal,
   ]);
 
   useEffect(() => {

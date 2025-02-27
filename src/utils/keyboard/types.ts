@@ -85,7 +85,7 @@ export const KeyboardLayoutCodes = [
   // , 'sv'
   'th',
   'tr',
-];
+] as const;
 
 export type KeyboardLayout = typeof KeyboardLayoutCodes[number];
 
