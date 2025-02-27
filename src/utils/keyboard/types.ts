@@ -50,41 +50,53 @@ export type CharMappingWithModifiers = {
   modifiers: CharMapping[];
 };
 
-export type KeyboardLayout =
-  | 'ar'
-  | 'bepo'
-  | 'cz'
-  | 'da'
-  | 'de-ch'
-  | 'de'
-  | 'en-gb'
-  | 'en-us'
-  | 'es'
-  | 'et'
-  | 'fi'
-  | 'fo'
-  | 'fr-be'
-  | 'fr-ca'
-  | 'fr-ch'
-  | 'fr'
-  | 'hr'
-  | 'hu'
-  | 'is'
-  | 'it'
-  | 'ja'
-  | 'lt'
-  | 'lv'
-  | 'mk'
-  | 'nl'
-  // | 'no'
-  | 'pl'
-  | 'pt-br'
-  | 'pt'
-  | 'ru'
-  // | 'sl'
-  // | 'sv'
-  | 'th'
-  | 'tr';
+export const KeyboardLayoutCodes = [
+  'ar',
+  'bepo',
+  'cz',
+  'da',
+  'de-ch',
+  'de',
+  'en-gb',
+  'en-us',
+  'es',
+  'et',
+  'fi',
+  'fo',
+  'fr-be',
+  'fr-ca',
+  'fr-ch',
+  'fr',
+  'hr',
+  'hu',
+  'is',
+  'it',
+  'ja',
+  'lt',
+  'lv',
+  'mk',
+  'nl',
+  // , 'no'
+  'pl',
+  'pt-br',
+  'pt',
+  'ru',
+  // , 'sl'
+  // , 'sv'
+  'th',
+  'tr',
+];
+
+export type KeyboardLayout = typeof KeyboardLayoutCodes[number];
+
+/**
+ *
+ * @param name any
+ * @returns true if KeyboardLayout
+ */
+export function isKeyboardLayout(name: any): name is KeyboardLayout {
+  return KeyboardLayoutCodes.includes(name);
+}
 
 export const LINE_FEED = 10;
 export const HORIZONTAL_TAB = 9;

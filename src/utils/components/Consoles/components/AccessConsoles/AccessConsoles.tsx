@@ -4,6 +4,7 @@ import DropdownToggle from '@kubevirt-utils/components/toggles/DropdownToggle';
 import SelectToggle from '@kubevirt-utils/components/toggles/SelectToggle';
 import { t } from '@kubevirt-utils/hooks/useKubevirtTranslation';
 import { keyMaps } from '@kubevirt-utils/keyboard/keymaps/keymaps';
+import { isKeyboardLayout, KeyboardLayout } from '@kubevirt-utils/keyboard/types';
 import {
   Button,
   ButtonVariant,
@@ -28,6 +29,7 @@ import './access-consoles.scss';
 const { connected } = ConsoleState;
 
 export const AccessConsoles: FC<AccessConsolesProps> = ({
+  isVnc,
   isWindowsVM,
   rfb,
   serialSocket,
@@ -37,7 +39,7 @@ export const AccessConsoles: FC<AccessConsolesProps> = ({
   const [isOpenSelectType, setIsOpenSelectType] = useState<boolean>(false);
   const [isOpenSendKey, setIsOpenSendKey] = useState<boolean>(false);
   const [status, setStatus] = useState<string>();
-  const [selectedKeyboard, setSelectedKeyboard] = useState<string>('en-us');
+  const [selectedKeyboard, setSelectedKeyboard] = useState<KeyboardLayout>('en-us');
   const [isKeyboardSelectOpen, setIsKeyboardSelectOpen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -79,45 +81,42 @@ export const AccessConsoles: FC<AccessConsolesProps> = ({
       <Button
         icon={
           <>
-            <PasteIcon /> {t('Type into console')}
+            <PasteIcon /> {isVnc ? t('Type into console') : t('Paste to console')}
           </>
         }
         className="vnc-paste-button"
         onClick={onInjectTextFromClipboard}
         variant={ButtonVariant.link}
       />
-      <Select
-        onSelect={(_event, value?: number | string) => {
-          setSelectedKeyboard(value as string);
-          setIsKeyboardSelectOpen(false);
-        }}
-        toggle={(toggleRef: Ref<MenuToggleElement>) => (
-          <MenuToggle
-            style={
-              {
-                width: '200px',
-              } as React.CSSProperties
-            }
-            isExpanded={isKeyboardSelectOpen}
-            onClick={() => setIsKeyboardSelectOpen(!isKeyboardSelectOpen)}
-            ref={toggleRef}
-          >
-            {selectedKeyboard}
-          </MenuToggle>
-        )}
-        isOpen={isKeyboardSelectOpen}
-        onOpenChange={(isOpen) => setIsKeyboardSelectOpen(isOpen)}
-        selected={selectedKeyboard}
-        shouldFocusToggleOnSelect
-      >
-        <SelectList>
-          {Object.keys(keyMaps).map((value) => (
-            <SelectOption key={value} value={value}>
-              {value}
-            </SelectOption>
-          ))}
-        </SelectList>
-      </Select>
+      {isVnc && (
+        <Select
+          onSelect={(_event, value?: number | string) => {
+            isKeyboardLayout(value) && setSelectedKeyboard(value);
+            setIsKeyboardSelectOpen(false);
+          }}
+          toggle={(toggleRef: Ref<MenuToggleElement>) => (
+            <MenuToggle
+              isExpanded={isKeyboardSelectOpen}
+              onClick={() => setIsKeyboardSelectOpen(!isKeyboardSelectOpen)}
+              ref={toggleRef}
+            >
+              {selectedKeyboard}
+            </MenuToggle>
+          )}
+          isOpen={isKeyboardSelectOpen}
+          onOpenChange={(isOpen) => setIsKeyboardSelectOpen(isOpen)}
+          selected={selectedKeyboard}
+          shouldFocusToggleOnSelect
+        >
+          <SelectList>
+            {Object.keys(keyMaps).map((value) => (
+              <SelectOption key={value} value={value}>
+                {value}
+              </SelectOption>
+            ))}
+          </SelectList>
+        </Select>
+      )}
       <Select
         onSelect={(_, selection: string) => {
           setType(selection);
