@@ -842,7 +842,7 @@ export const keysym2ucs = (keysym: number): number => {
 
   /* binary search in table */
   while (max >= min) {
-    mid = (min + max) / 2;
+    mid = Math.floor((min + max) / 2);
     if (keysymtab[mid][0] < keysym) {
       min = mid + 1;
     } else if (keysymtab[mid][0] > keysym) {
@@ -871,7 +871,7 @@ export const ucs2keysym = (ucs: number): number => {
 
   /* binary search in table */
   while (max >= min) {
-    mid = (min + max) / 2;
+    mid = Math.floor((min + max) / 2);
     if (reverse_keysymtab[mid][1] < ucs) {
       min = mid + 1;
     } else if (reverse_keysymtab[mid][1] > ucs) {

@@ -67,17 +67,19 @@ export const resolveCharMapping = (
     };
   }
 
-  const keysym = ucs2keysym(char.codePointAt(0));
+  const unicode = char.codePointAt(0);
+  const keysym = ucs2keysym(unicode);
 
-  const [name] = name2keysym
+  // based on https://github.com/qemu/qemu/blob/b69801dd6b1eb4d107f7c2f643adf0a4e3ec9124/ui/keymaps.c#L43
+  // some rules are based on names in format UXXXX
+  // FIXME: (only)'no' keymap uses keysyms as names in few cases (likely a bug)
+  // example: 0x010000d7 which seems U00D7
+  const unicodeBasedName = `U${Number(unicode).toString(16).toUpperCase().padStart(4, '0')}`;
+  const [mnemonicName = unicodeBasedName] = name2keysym
     .filter(([, keysymCode]) => keysymCode === keysym)
     .map(([_name]) => _name);
-  if (!name) {
-    // no match for name (by keysym)
-    // TODO: use the same fallback as qemu - to unicode like label
-    return emptyMapping(char, keysym);
-  }
-  const [resolved] = keymap.filter(([_name]) => _name === name);
+
+  const [resolved] = keymap.filter(([name]) => name === mnemonicName);
   if (!resolved) {
     // no match in the keymap (by name)
     return emptyMapping(char, keysym);
