@@ -3,6 +3,7 @@ import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 're
 import cn from 'classnames';
 
 import LoadingEmptyState from '@kubevirt-utils/components/LoadingEmptyState/LoadingEmptyState';
+import { useModal } from '@kubevirt-utils/components/ModalProvider/ModalProvider';
 import { useKubevirtTranslation } from '@kubevirt-utils/hooks/useKubevirtTranslation';
 import { resolveCharMapping } from '@kubevirt-utils/keyboard/keyboard';
 import { keyMaps } from '@kubevirt-utils/keyboard/keymaps/keymaps';
@@ -27,8 +28,8 @@ import { ConsoleState, WS, WSS } from '../utils/ConsoleConsts';
 import useCopyPasteConsole from '../utils/hooks/useCopyPasteConsole';
 
 import { VncConsoleProps } from './utils/VncConsoleTypes';
+import UnsupportedCharModal from './UnsupportedCharModal';
 
-// import UnsupportedCharModal from './UnsupportedCharModal';
 import '@patternfly/react-styles/css/components/Consoles/VncConsole.css';
 import './vnc-console.scss';
 
@@ -48,7 +49,7 @@ export const VncConsole: FC<VncConsoleProps> = ({
   const [activeTabKey, setActiveTabKey] = useState<number | string>(0);
   const pasteText = useCopyPasteConsole();
   const staticRenderLocationRef = useRef(null);
-  // const { createModal } = useModal();
+  const { createModal } = useModal();
   const StaticRenderLocation = useMemo(
     () => (
       <div
@@ -107,12 +108,16 @@ export const VncConsole: FC<VncConsoleProps> = ({
           resolveCharMapping(codePoint, keyMap.map),
         );
 
-        const unsupportedChar = mappedChars.find(({ mapping }) => mapping.scanCode === 0);
-        if (unsupportedChar) {
-          // createModal((props) => (
-          //   <UnsupportedCharModal {...props} unsupportedChar={'' + unsupportedChar.keysym} />
-          // ));
-          console.error('Unsupported char', unsupportedChar);
+        const unsupportedChars = mappedChars.filter(({ mapping }) => mapping.scanCode === 0);
+        if (unsupportedChars.length) {
+          createModal((props) => (
+            <UnsupportedCharModal
+              {...props}
+              unsupportedChars={Array.from(
+                new Set(unsupportedChars.map(({ mapping }) => mapping.char ?? '<unknown>')),
+              )}
+            />
+          ));
           return;
         }
 

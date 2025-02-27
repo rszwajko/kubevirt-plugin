@@ -1,17 +1,18 @@
 import React, { FC } from 'react';
 
 import { useKubevirtTranslation } from '@kubevirt-utils/hooks/useKubevirtTranslation';
-import { Button, Modal } from '@patternfly/react-core';
+import { Button, List, ListItem, Modal } from '@patternfly/react-core';
 
 type UnsupportedCharModal = {
   isOpen: boolean;
   onClose: () => void;
-  unsupportedChar: string;
+  unsupportedChars: string[];
 };
 
-const UnsupportedCharModal: FC<UnsupportedCharModal> = ({ isOpen, onClose, unsupportedChar }) => {
+const UnsupportedCharModal: FC<UnsupportedCharModal> = ({ isOpen, onClose, unsupportedChars }) => {
   const { t } = useKubevirtTranslation();
-
+  const maxChars = 10;
+  const unsupportedCharCount = unsupportedChars.length;
   return (
     <Modal
       actions={[
@@ -22,10 +23,19 @@ const UnsupportedCharModal: FC<UnsupportedCharModal> = ({ isOpen, onClose, unsup
       className="confirm-multiple-vm-actions-modal"
       isOpen={isOpen}
       onClose={onClose}
-      title={t('Unsupported char {{char}}', unsupportedChar)}
+      position="top"
+      title={t('Unsupported content in the clipboard')}
       variant={'small'}
     >
-      {t('The character is not supported by the keymap')}
+      {t('{{unsupportedCharCount}} characters are not supported by the keyboard layout mapping.', {
+        unsupportedCharCount,
+      })}
+      <List>
+        {unsupportedChars.splice(0, maxChars).map((char) => (
+          <ListItem key={char}>{`'${char}' (0x${char.codePointAt(0).toString(16)})`}</ListItem>
+        ))}
+        {unsupportedCharCount > maxChars && <ListItem>...</ListItem>}
+      </List>
     </Modal>
   );
 };
