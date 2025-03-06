@@ -7,8 +7,8 @@ import {
 } from '@kubevirt-utils/components/GuidedTour/utils/constants';
 import HorizontalNavbar from '@kubevirt-utils/components/HorizontalNavbar/HorizontalNavbar';
 import { SidebarEditorProvider } from '@kubevirt-utils/components/SidebarEditor/SidebarEditorContext';
+import { isInstanceTypeVM } from '@kubevirt-utils/resources/instancetype/helper';
 import useInstanceTypeExpandSpec from '@kubevirt-utils/resources/vm/hooks/useInstanceTypeExpandSpec';
-import { isInstanceTypeVM } from '@kubevirt-utils/resources/vm/utils/instanceTypes';
 import { isEmpty } from '@kubevirt-utils/utils/utils';
 import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 
@@ -38,9 +38,9 @@ const VirtualMachineNavPage: React.FC<VirtualMachineDetailsPageProps> = ({
         },
   );
 
-  const vmToShow = runningTourSignal.value ? tourGuideVM : vm;
-
-  const [instanceTypeExpandedSpec, expandedSpecLoading] = useInstanceTypeExpandSpec(vmToShow);
+  const baseVm = runningTourSignal.value ? tourGuideVM : vm;
+  const [instanceTypeExpandedSpec, expandedSpecLoading] = useInstanceTypeExpandSpec(baseVm);
+  const vmToShow = isInstanceTypeVM(baseVm) ? instanceTypeExpandedSpec : baseVm;
 
   const pages = useVirtualMachineTabs();
 
@@ -49,12 +49,11 @@ const VirtualMachineNavPage: React.FC<VirtualMachineDetailsPageProps> = ({
       <VirtualMachineNavPageTitle
         isLoaded={isLoaded || !isEmpty(loadError)}
         name={name}
-        vm={isInstanceTypeVM(vmToShow) ? instanceTypeExpandedSpec : vmToShow}
+        vm={vmToShow}
       />
       <div className="VirtualMachineNavPage--tabs__main">
         <HorizontalNavbar
           error={loadError}
-          instanceTypeExpandedSpec={instanceTypeExpandedSpec}
           loaded={isLoaded && !expandedSpecLoading}
           pages={pages}
           vm={vmToShow}
