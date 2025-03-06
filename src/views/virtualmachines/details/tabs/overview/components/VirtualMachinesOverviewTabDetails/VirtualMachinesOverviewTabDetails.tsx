@@ -50,7 +50,6 @@ type VirtualMachinesOverviewTabDetailsProps = {
   error: Error;
   guestAgentData: V1VirtualMachineInstanceGuestAgentInfo;
   guestAgentDataLoaded: boolean;
-  instanceTypeExpandedSpec: V1VirtualMachine;
   loaded: boolean;
   vm: V1VirtualMachine;
   vmi: V1VirtualMachineInstance;
@@ -60,7 +59,6 @@ const VirtualMachinesOverviewTabDetails: FC<VirtualMachinesOverviewTabDetailsPro
   error,
   guestAgentData,
   guestAgentDataLoaded,
-  instanceTypeExpandedSpec,
   loaded,
   vm,
   vmi,
@@ -159,7 +157,7 @@ const VirtualMachinesOverviewTabDetails: FC<VirtualMachinesOverviewTabDetailsPro
                   descriptionHeader={t('Operating system')}
                 />
                 <VirtualMachineDescriptionItem
-                  descriptionData={<CPUMemory vm={instanceTypeExpandedSpec || vm} vmi={vmi} />}
+                  descriptionData={<CPUMemory vm={vm} vmi={vmi} />}
                   descriptionHeader={t('CPU | Memory')}
                 />
                 <VirtualMachineDescriptionItem

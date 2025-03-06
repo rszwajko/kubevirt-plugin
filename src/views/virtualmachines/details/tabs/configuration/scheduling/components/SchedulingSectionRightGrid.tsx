@@ -9,8 +9,8 @@ import { useModal } from '@kubevirt-utils/components/ModalProvider/ModalProvider
 import SearchItem from '@kubevirt-utils/components/SearchItem/SearchItem';
 import VirtualMachineDescriptionItem from '@kubevirt-utils/components/VirtualMachineDescriptionItem/VirtualMachineDescriptionItem';
 import { useKubevirtTranslation } from '@kubevirt-utils/hooks/useKubevirtTranslation';
+import { isInstanceTypeVM } from '@kubevirt-utils/resources/instancetype/helper';
 import { getEvictionStrategy } from '@kubevirt-utils/resources/vm';
-import { isInstanceTypeVM } from '@kubevirt-utils/resources/vm/utils/instanceTypes';
 import { k8sUpdate } from '@openshift-console/dynamic-plugin-sdk';
 import { DescriptionList, GridItem } from '@patternfly/react-core';
 
@@ -18,7 +18,6 @@ import DedicatedResources from './DedicatedResources';
 
 type SchedulingSectionRightGridProps = {
   canUpdateVM: boolean;
-  instanceTypeVM?: V1VirtualMachine;
   onUpdateVM?: (updatedVM: V1VirtualMachine) => Promise<V1VirtualMachine>;
   vm: V1VirtualMachine;
   vmi?: V1VirtualMachineInstance;
@@ -26,7 +25,6 @@ type SchedulingSectionRightGridProps = {
 
 const SchedulingSectionRightGrid: FC<SchedulingSectionRightGridProps> = ({
   canUpdateVM,
-  instanceTypeVM,
   onUpdateVM,
   vm,
   vmi,
@@ -70,7 +68,7 @@ const SchedulingSectionRightGrid: FC<SchedulingSectionRightGridProps> = ({
             ))
           }
           data-test-id="dedicated-resources"
-          descriptionData={<DedicatedResources vm={isInstanceTypeVM(vm) ? instanceTypeVM : vm} />}
+          descriptionData={<DedicatedResources vm={vm} />}
           isDisabled={isInstanceTypeVM(vm)}
           isEdit={canUpdateVM}
         />
