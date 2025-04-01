@@ -33,7 +33,7 @@ export const ENALBE_PREACCLOCATION_FIELD = 'dataVolumeTemplate.spec.preallocatio
 export const ACCESS_MODE_FIELD = 'dataVolumeTemplate.spec.storage.accessModes';
 export const STORAGE_PROFILE_SETTINGS_APPLIED_FIELD = 'storageProfileSettingsApplied';
 export const VOLUME_MODE_FIELD = 'dataVolumeTemplate.spec.storage.volumeMode';
-export const DATAVOLUME_TEMPLATE_STORAGE = 'dataVolumeTemplate.spec.storage';
+export const DATAVOLUME_TEMPLATE_STORAGE_CLASS = 'dataVolumeTemplate.spec.storage.storageClassName';
 
 export const CONTAINERDISK_IMAGE_FIELD = 'volume.containerDisk.image';
 

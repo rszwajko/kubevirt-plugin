@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import { useKubevirtTranslation } from '@kubevirt-utils/hooks/useKubevirtTranslation';
 import { ClaimPropertySets } from '@kubevirt-utils/types/storage';
@@ -17,17 +17,21 @@ type AccessModeProps = {
   claimPropertySets: ClaimPropertySets;
 };
 
-const AccessMode: FC<AccessModeProps> = ({ claimPropertySets }) => {
+const AccessMode: FC<AccessModeProps> = ({ claimPropertySets = [] }) => {
   const { t } = useKubevirtTranslation();
 
-  const { setValue, watch } = useFormContext<V1DiskFormState>();
+  const { setValue } = useFormContext<V1DiskFormState>();
 
-  const [accessModes, volumeMode] = watch([ACCESS_MODE_FIELD, VOLUME_MODE_FIELD]);
+  const [accessModes = [], volumeMode] = useWatch<
+    V1DiskFormState,
+    [typeof ACCESS_MODE_FIELD, typeof VOLUME_MODE_FIELD]
+  >({ name: [ACCESS_MODE_FIELD, VOLUME_MODE_FIELD] });
 
   const accessMode = accessModes?.[0];
 
   const accessModesForVolume = getAccessModesForVolume(claimPropertySets, volumeMode);
-
+  // eslint-disable-next-line no-console
+  console.log('Render - AccessMode', accessModes, volumeMode, claimPropertySets);
   return (
     <FormGroup fieldId={ACCESS_MODE_FIELDID} label={t('Access Mode')}>
       {ACCESS_MODE_RADIO_OPTIONS.map(({ label, value }) => (

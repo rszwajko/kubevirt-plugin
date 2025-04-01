@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { Trans } from 'react-i18next';
 import { Link } from 'react-router-dom-v5-compat';
 import { uniq } from 'lodash';
@@ -22,12 +22,15 @@ type VolumeModeProps = {
   claimPropertySets: ClaimPropertySets;
 };
 
-const VolumeMode: FC<VolumeModeProps> = ({ claimPropertySets }) => {
+const VolumeMode: FC<VolumeModeProps> = ({ claimPropertySets = [] }) => {
   const { t } = useKubevirtTranslation();
 
-  const { setValue, watch } = useFormContext<V1DiskFormState>();
+  const { setValue } = useFormContext<V1DiskFormState>();
 
-  const volumeMode = watch(VOLUME_MODE_FIELD);
+  const volumeMode = useWatch<V1DiskFormState, typeof VOLUME_MODE_FIELD>({
+    name: VOLUME_MODE_FIELD,
+  });
+
   const recommendedVolumeModes = uniq(
     claimPropertySets
       .map((it) => it.volumeMode)
