@@ -1,62 +1,83 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
+import { TFunction } from 'react-i18next';
 
+import { V1Interface } from '@kubevirt-ui/kubevirt-api/kubevirt';
+import {
+  ACTIONS,
+  compareWitDirection,
+  MAC_ADDRESS,
+  MODEL,
+  NAME,
+  NETWORK,
+} from '@kubevirt-utils/constants/network-columns';
 import { useKubevirtTranslation } from '@kubevirt-utils/hooks/useKubevirtTranslation';
-import { NetworkPresentation } from '@kubevirt-utils/resources/vm/utils/network/constants';
-import { sortNICs } from '@kubevirt-utils/resources/vm/utils/network/utils';
 import { TableColumn } from '@openshift-console/dynamic-plugin-sdk';
 import { sortable } from '@patternfly/react-table';
 
-const useNetworkColumns = (data: NetworkPresentation[]) => {
+import { SimpeNicPresentation } from '../components/list/NetworkInterfaceList';
+import { getConfigInterfaceState } from '../utils/utils';
+
+export const RUNTIME_LINK_STATE = <T extends { runtimeLinkState?: string }>(
+  t: TFunction,
+): TableColumn<T> => ({
+  id: 'runtime_link_state',
+  sort: (data, direction) =>
+    data.sort((a, b) => compareWitDirection(direction, a?.runtimeLinkState, b?.runtimeLinkState)),
+  title: t('Runtime state'),
+  transforms: [sortable],
+});
+
+export const CONFIG_LINK_STATE = <
+  T extends { config?: { iface?: V1Interface }; configLinkState?: string; isSRIOV: boolean },
+>(
+  t: TFunction,
+): TableColumn<T> => ({
+  id: 'config_link_state',
+  sort: (data, direction) =>
+    data.sort((a, b) =>
+      compareWitDirection(
+        direction,
+        getConfigInterfaceState(a?.config?.iface, a?.configLinkState, a?.isSRIOV),
+        getConfigInterfaceState(b?.config?.iface, b?.configLinkState, b?.isSRIOV),
+      ),
+    ),
+  title: t('Configured state'),
+  transforms: [sortable],
+});
+
+const INTERFACE_NAME = <T extends { interfaceName?: string }>(t: TFunction): TableColumn<T> => ({
+  id: 'interfaceName',
+  sort: (data, direction) =>
+    data.sort((a, b) => compareWitDirection(direction, a?.interfaceName, b?.interfaceName)),
+  title: t('Interface'),
+  transforms: [sortable],
+});
+
+const TYPE = <T extends { type?: string }>(t: TFunction): TableColumn<T> => ({
+  id: 'type',
+  sort: (data, direction) => data.sort((a, b) => compareWitDirection(direction, a?.type, b?.type)),
+  title: t('Type'),
+  transforms: [sortable],
+});
+
+const useNetworkColumns = () => {
   const { t } = useKubevirtTranslation();
 
-  const sorting = useCallback((direction) => sortNICs(data, direction), [data]);
-
-  const columns: TableColumn<NetworkPresentation>[] = useMemo(
-    () => [
-      {
-        id: 'name',
-        sort: 'network.name',
-        title: t('Name'),
-        transforms: [sortable],
-      },
-      {
-        id: 'model',
-        sort: 'iface.model',
-        title: t('Model'),
-        transforms: [sortable],
-      },
-      {
-        id: 'network',
-        sort: 'network.pod' || 'network.multus.networkName',
-        title: t('Network'),
-        transforms: [sortable],
-      },
-      {
-        id: 'state',
-        sort: 'iface.state',
-        title: t('State'),
-        transforms: [sortable],
-      },
-      {
-        id: 'type',
-        sort: (_, direction) => sorting(direction),
-        title: t('Type'),
-        transforms: [sortable],
-      },
-      {
-        id: 'macAddress',
-        sort: 'iface.macAddress',
-        title: t('MAC address'),
-        transforms: [sortable],
-      },
-      {
-        id: '',
-        props: { className: 'pf-v6-c-table__action' },
-        title: '',
-      },
-    ],
-    [sorting, t],
-  );
+  const columns: TableColumn<SimpeNicPresentation>[] = useMemo(() => {
+    return [
+      ...[
+        NAME<SimpeNicPresentation>,
+        INTERFACE_NAME<SimpeNicPresentation>,
+        MODEL<SimpeNicPresentation>,
+        NETWORK<SimpeNicPresentation>,
+        RUNTIME_LINK_STATE<SimpeNicPresentation>,
+        CONFIG_LINK_STATE<SimpeNicPresentation>,
+        TYPE<SimpeNicPresentation>,
+        MAC_ADDRESS<SimpeNicPresentation>,
+      ].map((builder) => builder(t)),
+      ACTIONS,
+    ];
+  }, [t]);
 
   return columns;
 };
