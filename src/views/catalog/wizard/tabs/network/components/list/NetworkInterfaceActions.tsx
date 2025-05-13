@@ -14,7 +14,7 @@ import { NetworkPresentation } from '@kubevirt-utils/resources/vm/utils/network/
 import { isEmpty } from '@kubevirt-utils/utils/utils';
 import { ButtonVariant, Dropdown, DropdownItem, DropdownList } from '@patternfly/react-core';
 import {
-  getInterfaceState,
+  getDesiredInterfaceState,
   isSRIOVInterface,
 } from '@virtualmachines/details/tabs/configuration/network/utils/utils';
 
@@ -41,7 +41,7 @@ const NetworkInterfaceActions: FC<NetworkInterfaceActionsProps> = ({
   const label = t('Delete NIC?');
   const editBtnText = t('Edit');
   const submitBtnText = t('Delete');
-  const interfaceState = getInterfaceState(vm, nicName);
+  const interfaceState = getDesiredInterfaceState(vm, nicName);
   const isSRIOVIface = isSRIOVInterface(vm, nicName);
 
   const onEditModalOpen = () => {
@@ -104,7 +104,7 @@ const NetworkInterfaceActions: FC<NetworkInterfaceActionsProps> = ({
       popperProps={{ position: 'right' }}
       toggle={KebabToggle({ id: 'toggle-id-network', onClick: onToggle })}
     >
-      {interfaceState === NetworkInterfaceState.DOWN ? (
+      {interfaceState === NetworkInterfaceState.DOWN && (
         <DropdownItem
           isDisabled={isSRIOVIface}
           key="network-interface-state-up"
@@ -112,7 +112,8 @@ const NetworkInterfaceActions: FC<NetworkInterfaceActionsProps> = ({
         >
           {t('Set link up')}
         </DropdownItem>
-      ) : (
+      )}
+      {interfaceState === NetworkInterfaceState.UP && (
         <DropdownItem
           description={isSRIOVIface && t('Not available for SR-IOV interfaces')}
           isDisabled={isSRIOVIface}

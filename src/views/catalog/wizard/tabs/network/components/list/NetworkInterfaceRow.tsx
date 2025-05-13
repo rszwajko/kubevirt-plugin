@@ -6,7 +6,10 @@ import { NO_DATA_DASH } from '@kubevirt-utils/resources/vm/utils/constants';
 import { NetworkPresentation } from '@kubevirt-utils/resources/vm/utils/network/constants';
 import { getPrintableNetworkInterfaceType } from '@kubevirt-utils/resources/vm/utils/network/selectors';
 import { RowProps, TableData } from '@openshift-console/dynamic-plugin-sdk';
-import { getNetworkInterfaceStateIcon } from '@virtualmachines/details/tabs/configuration/network/utils/utils';
+import {
+  getDesiredInterfaceState,
+  getNetworkInterfaceStateIcon,
+} from '@virtualmachines/details/tabs/configuration/network/utils/utils';
 
 import NetworkInterfaceActions from './NetworkInterfaceActions';
 
@@ -21,7 +24,9 @@ const NetworkInterfaceRow: FC<
   >
 > = ({ activeColumnIDs, obj: { iface, network }, rowData: { onUpdateVM, vm } }) => {
   const { t } = useKubevirtTranslation();
-  const InterfaceStateIcon = getNetworkInterfaceStateIcon(vm, network?.name);
+  const InterfaceStateIcon = getNetworkInterfaceStateIcon(
+    getDesiredInterfaceState(vm, network?.name),
+  );
 
   return (
     <>

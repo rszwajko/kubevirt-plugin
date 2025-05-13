@@ -9,7 +9,7 @@ import './NetworkInterfaceLinkState.scss';
 
 type NetworkInterfaceLinkStateProps = {
   isDisabled: boolean;
-  linkState: string;
+  linkState: NetworkInterfaceState;
   setLinkState: Dispatch<SetStateAction<string>>;
 };
 

@@ -11,26 +11,14 @@ type UseVirtualMachinesOverviewTabInterfacesData = (
 const useVirtualMachinesOverviewTabInterfacesData: UseVirtualMachinesOverviewTabInterfacesData = (
   vm: V1VirtualMachine,
   vmi: V1VirtualMachineInstance,
-) => {
-  const { interfaces, networks } = getInterfacesAndNetworks(vm, vmi);
-  const interfacesIPs = vmi?.status?.interfaces?.filter((iface) => !!iface.name) || [];
-
-  const networkInterfacesData = interfaces?.map((iface) => {
-    const network = networks?.find((net) => net.name === iface.name);
-    const nic = interfacesIPs?.find((iIP) => iIP.name === iface.name) || {};
-    const ipAddresses = nic?.ipAddresses?.map((ip) => ({
-      interfaceName: nic?.interfaceName,
+) =>
+  getInterfacesAndNetworks(vm, vmi).map(({ current, desired }) => ({
+    iface: desired?.iface,
+    ipAddresses: current?.iface?.ipAddresses?.map((ip) => ({
+      interfaceName: current?.iface?.interfaceName,
       ip,
-    }));
-
-    return {
-      iface,
-      ipAddresses,
-      network,
-    };
-  });
-
-  return networkInterfacesData;
-};
+    })),
+    network: current?.network ?? desired?.network,
+  }));
 
 export default useVirtualMachinesOverviewTabInterfacesData;
