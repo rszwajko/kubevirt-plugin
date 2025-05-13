@@ -1,29 +1,42 @@
-import { V1VirtualMachine, V1VirtualMachineInstance } from '@kubevirt-ui/kubevirt-api/kubevirt';
+import {
+  V1Interface,
+  V1Network,
+  V1VirtualMachine,
+  V1VirtualMachineInstance,
+  V1VirtualMachineInstanceNetworkInterface,
+} from '@kubevirt-ui/kubevirt-api/kubevirt';
 import { getInterfaces, getNetworks } from '@kubevirt-utils/resources/vm';
 import {
   getVMIInterfaces,
   getVMINetworks,
   getVMIStatusInterfaces,
 } from '@kubevirt-utils/resources/vmi/utils/selectors';
-import { removeDuplicatesByName } from '@kubevirt-utils/utils/utils';
+import {
+  removeDuplicatesByName,
+  sortByDirection,
+  universalComparator,
+} from '@kubevirt-utils/utils/utils';
+import { SortByDirection } from '@patternfly/react-table';
 import { isRunning } from '@virtualmachines/utils';
 
 import { NetworkPresentation } from './constants';
 import { getPrintableNetworkInterfaceType } from './selectors';
 
-export const sortNICs = (nics: NetworkPresentation[], direction: string) =>
-  nics.sort((a: NetworkPresentation, b: NetworkPresentation) => {
-    const aUpdated = getPrintableNetworkInterfaceType(a.iface);
-    const bUpdated = getPrintableNetworkInterfaceType(b.iface);
+export const sortNICs = (nics: NetworkPresentation[], direction: SortByDirection) =>
+  nics.sort((a: NetworkPresentation, b: NetworkPresentation) =>
+    sortByDirection(universalComparator, direction)(
+      getPrintableNetworkInterfaceType(a.iface),
+      getPrintableNetworkInterfaceType(b.iface),
+    ),
+  );
 
-    if (aUpdated && bUpdated) {
-      return direction === 'asc'
-        ? aUpdated.localeCompare(bUpdated)
-        : bUpdated.localeCompare(aUpdated);
-    }
-  });
-
-export const getInterfacesAndNetworks = (vm: V1VirtualMachine, vmi: V1VirtualMachineInstance) => {
+export const getInterfacesAndNetworks = (
+  vm: V1VirtualMachine,
+  vmi: V1VirtualMachineInstance,
+): {
+  interfaces: (V1Interface | V1VirtualMachineInstanceNetworkInterface)[];
+  networks: V1Network[];
+} => {
   const vmNetworks = getNetworks(vm) || [];
   const vmInterfaces = getInterfaces(vm) || [];
 

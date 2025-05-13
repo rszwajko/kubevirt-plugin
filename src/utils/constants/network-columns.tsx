@@ -1,0 +1,73 @@
+import { TFunction } from 'react-i18next';
+
+import { NetworkPresentation } from '@kubevirt-utils/resources/vm/utils/network/constants';
+import { sortNICs } from '@kubevirt-utils/resources/vm/utils/network/utils';
+import { sortByDirection, universalComparator } from '@kubevirt-utils/utils/utils';
+import { TableColumn } from '@openshift-console/dynamic-plugin-sdk';
+import { sortable, SortByDirection } from '@patternfly/react-table';
+
+const compare = (direction: SortByDirection, a: any, b: any) =>
+  sortByDirection(universalComparator, direction)(a, b);
+
+export const NAME = <T extends { network: { name: string } }>(t: TFunction): TableColumn<T> => ({
+  id: 'name',
+  sort: (data, direction) =>
+    data.sort((a, b) => compare(direction, a?.network?.name, b?.network?.name)),
+  title: t('Name'),
+  transforms: [sortable],
+});
+
+export const MODEL = <T extends { iface: { model?: string } }>(t: TFunction): TableColumn<T> => ({
+  id: 'model',
+  sort: (data, direction) =>
+    data.sort((a, b) => compare(direction, a?.iface?.model, b?.iface?.model)),
+  title: t('Model'),
+  transforms: [sortable],
+});
+
+export const NETWORK = <T extends { network: { multus?: { networkName: string }; pod?: unknown } }>(
+  t: TFunction,
+): TableColumn<T> => ({
+  id: 'network',
+  sort: (data, direction) =>
+    data.sort((a, b) =>
+      compare(
+        direction,
+        a?.network?.pod ?? a?.network?.multus?.networkName,
+        b?.network?.pod ?? b?.network?.multus?.networkName,
+      ),
+    ),
+  title: t('Network'),
+  transforms: [sortable],
+});
+
+export const STATE = <T extends { iface: { state?: string } }>(t: TFunction): TableColumn<T> => ({
+  id: 'state',
+  sort: (data, direction) =>
+    data.sort((a, b) => compare(direction, a?.iface?.state, b?.iface?.state)),
+  title: t('State'),
+  transforms: [sortable],
+});
+
+export const TYPE = (t: TFunction): TableColumn<NetworkPresentation> => ({
+  id: 'type',
+  sort: sortNICs,
+  title: t('Type'),
+  transforms: [sortable],
+});
+
+export const MAC_ADDRESS = <T extends { iface: { macAddress?: string } }>(
+  t: TFunction,
+): TableColumn<T> => ({
+  id: 'macAddress',
+  sort: (data, direction) =>
+    data.sort((a, b) => compare(direction, a?.iface?.macAddress, b?.iface?.macAddress)),
+  title: t('MAC address'),
+  transforms: [sortable],
+});
+
+export const ACTIONS = {
+  id: '',
+  props: { className: 'pf-v6-c-table__action' },
+  title: '',
+};

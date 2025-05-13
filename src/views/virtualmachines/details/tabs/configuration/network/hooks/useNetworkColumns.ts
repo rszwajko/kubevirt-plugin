@@ -1,62 +1,34 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 
+import {
+  ACTIONS,
+  MAC_ADDRESS,
+  MODEL,
+  NAME,
+  NETWORK,
+  STATE,
+  TYPE,
+} from '@kubevirt-utils/constants/network-columns';
 import { useKubevirtTranslation } from '@kubevirt-utils/hooks/useKubevirtTranslation';
 import { NetworkPresentation } from '@kubevirt-utils/resources/vm/utils/network/constants';
-import { sortNICs } from '@kubevirt-utils/resources/vm/utils/network/utils';
 import { TableColumn } from '@openshift-console/dynamic-plugin-sdk';
-import { sortable } from '@patternfly/react-table';
 
-const useNetworkColumns = (data: NetworkPresentation[]) => {
+const useNetworkColumns = () => {
   const { t } = useKubevirtTranslation();
 
-  const sorting = useCallback((direction) => sortNICs(data, direction), [data]);
-
-  const columns: TableColumn<NetworkPresentation>[] = useMemo(
-    () => [
-      {
-        id: 'name',
-        sort: 'network.name',
-        title: t('Name'),
-        transforms: [sortable],
-      },
-      {
-        id: 'model',
-        sort: 'iface.model',
-        title: t('Model'),
-        transforms: [sortable],
-      },
-      {
-        id: 'network',
-        sort: 'network.pod' || 'network.multus.networkName',
-        title: t('Network'),
-        transforms: [sortable],
-      },
-      {
-        id: 'state',
-        sort: 'iface.state',
-        title: t('State'),
-        transforms: [sortable],
-      },
-      {
-        id: 'type',
-        sort: (_, direction) => sorting(direction),
-        title: t('Type'),
-        transforms: [sortable],
-      },
-      {
-        id: 'macAddress',
-        sort: 'iface.macAddress',
-        title: t('MAC address'),
-        transforms: [sortable],
-      },
-      {
-        id: '',
-        props: { className: 'pf-v6-c-table__action' },
-        title: '',
-      },
-    ],
-    [sorting, t],
-  );
+  const columns: TableColumn<NetworkPresentation>[] = useMemo(() => {
+    return [
+      ...[
+        NAME<NetworkPresentation>,
+        MODEL<NetworkPresentation>,
+        NETWORK<NetworkPresentation>,
+        STATE<NetworkPresentation>,
+        TYPE,
+        MAC_ADDRESS<NetworkPresentation>,
+      ].map((builder) => builder(t)),
+      ACTIONS,
+    ];
+  }, [t]);
 
   return columns;
 };

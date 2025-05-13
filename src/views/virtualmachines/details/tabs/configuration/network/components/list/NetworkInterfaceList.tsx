@@ -37,7 +37,7 @@ const NetworkInterfaceList: FC<NetworkInterfaceTableProps> = ({ vm, vmi }) => {
 
   const [data, filteredData, onFilterChange] = useListPageFilter(networkInterfacesData, filters);
 
-  const columns = useNetworkColumns(filteredData);
+  const columns = useNetworkColumns();
 
   const autoattachPodInterface = getAutoAttachPodInterface(vm) !== false;
 
@@ -54,7 +54,7 @@ const NetworkInterfaceList: FC<NetworkInterfaceTableProps> = ({ vm, vmi }) => {
         loaded={!isEmpty(vm)}
         loadError={false}
         Row={NetworkInterfaceRow}
-        rowData={{ isInterfaceEphemeral, isPending, vm }}
+        rowData={{ isInterfaceEphemeral, isPending, vm, vmi }}
         unfilteredData={data}
       />
     </>

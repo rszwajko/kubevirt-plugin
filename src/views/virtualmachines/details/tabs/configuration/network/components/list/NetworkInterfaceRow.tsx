@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 import {
   V1Network,
   V1VirtualMachine,
+  V1VirtualMachineInstance,
   V1VirtualMachineInstanceNetworkInterface,
 } from '@kubevirt-ui/kubevirt-api/kubevirt';
 import EphemeralBadge from '@kubevirt-utils/components/badges/EphemeralBadge/EphemeralBadge';
@@ -13,7 +14,13 @@ import { NetworkPresentation } from '@kubevirt-utils/resources/vm/utils/network/
 import { getPrintableNetworkInterfaceType } from '@kubevirt-utils/resources/vm/utils/network/selectors';
 import { RowProps, TableData } from '@openshift-console/dynamic-plugin-sdk';
 
-import { getNetworkInterfaceStateIcon, isInterfaceEphemeral } from '../../utils/utils';
+import {
+  getAggregatedInterfaceState,
+  getCurrentInterfaceState,
+  getDesiredInterfaceState,
+  getNetworkInterfaceStateIcon,
+  isInterfaceEphemeral,
+} from '../../utils/utils';
 
 import NetworkInterfaceActions from './NetworkInterfaceActions';
 
@@ -31,13 +38,19 @@ const NetworkInterfaceRow: FC<
       ) => undefined | V1VirtualMachineInstanceNetworkInterface;
       isPending: (network: V1Network) => boolean;
       vm: V1VirtualMachine;
+      vmi: V1VirtualMachineInstance;
     }
   >
-> = ({ activeColumnIDs, obj: { iface, network }, rowData: { isPending, vm } }) => {
+> = ({ activeColumnIDs, obj: { iface, network }, rowData: { isPending, vm, vmi } }) => {
   const { t } = useKubevirtTranslation();
   const ephemeralNic = isInterfaceEphemeral(network, iface);
   const nicName = network?.name;
-  const InterfaceStateIcon = getNetworkInterfaceStateIcon(vm, nicName);
+  const InterfaceStateIcon = getNetworkInterfaceStateIcon(
+    getAggregatedInterfaceState(
+      getCurrentInterfaceState(vmi, nicName),
+      getDesiredInterfaceState(vm, nicName),
+    ),
+  );
 
   return (
     <>

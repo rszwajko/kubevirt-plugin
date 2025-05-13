@@ -737,7 +737,7 @@
   "Less than": "Less than",
   "Limitations": "Limitations",
   "Link state": "Link state",
-  "Link state is not available for SR-IOV interfaces": "Link state is not available for SR-IOV interfaces",
+  "Link state is not available for this type of network interface": "Link state is not available for this type of network interface",
   "Linux only": "Linux only",
   "Live migratable": "Live migratable",
   "Live migrate or restart the VirtualMachine to apply changes.": "Live migrate or restart the VirtualMachine to apply changes.",
