@@ -7,7 +7,7 @@ import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { NetworkInterfaceState } from '../NetworkInterfaceModal/utils/types';
 
 import { NetworkIconProps } from './NetworkIcon';
-import { stateText } from './utils';
+import StateText from './StateText';
 
 import './LinkStateIcon.scss';
 
@@ -16,12 +16,21 @@ const LinkStateNoDataIcon: FC<NetworkIconProps> = ({ configuredState, runtimeSta
 
   const unsupportedText =
     configuredState === NetworkInterfaceState.UNSUPPORTED
-      ? `\n${t('Link state is not available for this type of network interface')}`
+      ? t('Link state is not available for this type of network interface')
       : '';
 
   return (
     <Tooltip
-      content={`${stateText({ configuredState, runtimeState, t })}${unsupportedText}`}
+      content={
+        <StateText
+          {...{
+            configuredState,
+            details: unsupportedText,
+            runtimeState,
+          }}
+        />
+      }
+      isContentLeftAligned
       position={TooltipPosition.right}
     >
       <div className="link-state-icon">{NO_DATA_DASH}</div>

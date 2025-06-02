@@ -13,7 +13,7 @@ import { NetworkPresentation } from '@kubevirt-utils/resources/vm/utils/network/
 import { getContentScrollableElement } from '@kubevirt-utils/utils/utils';
 import { k8sUpdate } from '@openshift-console/dynamic-plugin-sdk';
 import { ButtonVariant, Dropdown, DropdownItem, DropdownList } from '@patternfly/react-core';
-import { getConfigInterfaceStateFromVm } from '@virtualmachines/details/tabs/configuration/network/utils/utils';
+import { getConfigInterfaceStateFromVM } from '@virtualmachines/details/tabs/configuration/network/utils/utils';
 
 import useEditTemplateAccessReview from '../../../../hooks/useIsTemplateEditable';
 import { setTemplateNetworkInterfaceState } from '../../utils';
@@ -35,7 +35,7 @@ const NetworkInterfaceActions: FC<NetworkInterfaceActionsProps> = ({
   const { isTemplateEditable } = useEditTemplateAccessReview(template);
 
   const templateVM = getTemplateVirtualMachineObject(template);
-  const interfaceState = getConfigInterfaceStateFromVm(templateVM, nicName);
+  const interfaceState = getConfigInterfaceStateFromVM(templateVM, nicName);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const label = t('Delete NIC?');

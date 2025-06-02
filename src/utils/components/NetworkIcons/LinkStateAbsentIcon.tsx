@@ -5,7 +5,7 @@ import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons';
 
 import { NetworkIconProps } from './NetworkIcon';
-import { stateText } from './utils';
+import StateText from './StateText';
 
 import './LinkStateIcon.scss';
 
@@ -14,9 +14,18 @@ const LinkStateAbsentIcon: FC<NetworkIconProps> = ({ configuredState, runtimeSta
 
   return (
     <Tooltip
-      content={`${stateText({ configuredState, runtimeState, t })}\n${t(
-        'This interface is currently hot-unplugged until the VirtualMachine is migrated.',
-      )}`}
+      content={
+        <StateText
+          {...{
+            configuredState,
+            details: t(
+              'This interface is currently hot-unplugged until the VirtualMachine is migrated',
+            ),
+            runtimeState,
+          }}
+        />
+      }
+      isContentLeftAligned
       position={TooltipPosition.right}
     >
       <InProgressIcon className="link-state-icon" />
