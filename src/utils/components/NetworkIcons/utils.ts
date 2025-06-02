@@ -24,7 +24,7 @@ export const getNetworkInterfaceStateIcon = (
 export const describeNetworkState = (t: TFunction, state: NetworkInterfaceState) => {
   switch (state) {
     case NetworkInterfaceState.ABSENT:
-      return t('Hot-unplug');
+      return t('Hot-unplugged');
     case NetworkInterfaceState.UP:
       return t('Up');
     case NetworkInterfaceState.DOWN:
@@ -36,21 +36,3 @@ export const describeNetworkState = (t: TFunction, state: NetworkInterfaceState)
       return t('None');
   }
 };
-
-export const stateText = ({
-  configuredState,
-  runtimeState,
-  t,
-}: {
-  configuredState: NetworkInterfaceState;
-  runtimeState?: NetworkInterfaceState;
-  t: TFunction;
-}) =>
-  runtimeState
-    ? t('Link state: {{runtimeState}}. Configured state: {{ configuredState}}.', {
-        configuredState: describeNetworkState(t, configuredState),
-        runtimeState: describeNetworkState(t, runtimeState),
-      })
-    : t('Configured state: {{ configuredState}}.', {
-        configuredState: describeNetworkState(t, configuredState),
-      });

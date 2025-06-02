@@ -10,7 +10,7 @@ import { NO_DATA_DASH } from '@kubevirt-utils/resources/vm/utils/constants';
 import { NetworkPresentation } from '@kubevirt-utils/resources/vm/utils/network/constants';
 import { getPrintableNetworkInterfaceType } from '@kubevirt-utils/resources/vm/utils/network/selectors';
 import { RowProps, TableData } from '@openshift-console/dynamic-plugin-sdk';
-import { getConfigInterfaceStateFromVm } from '@virtualmachines/details/tabs/configuration/network/utils/utils';
+import { getConfigInterfaceStateFromVM } from '@virtualmachines/details/tabs/configuration/network/utils/utils';
 
 import NetworkInterfaceActions from './NetworkInterfaceActions';
 
@@ -42,7 +42,7 @@ const NetworkInterfaceRow: FC<RowProps<NetworkPresentation, { template: V1Templa
         )}
       </TableData>
       <TableData activeColumnIDs={activeColumnIDs} id="state">
-        <NetworkIcon configuredState={getConfigInterfaceStateFromVm(templateVM, network?.name)} />
+        <NetworkIcon configuredState={getConfigInterfaceStateFromVM(templateVM, network?.name)} />
       </TableData>
       <TableData activeColumnIDs={activeColumnIDs} id="type">
         {getPrintableNetworkInterfaceType(iface)}

@@ -10,18 +10,18 @@ import { NO_DATA_DASH } from '@kubevirt-utils/resources/vm/utils/constants';
 import { RowProps, TableData } from '@openshift-console/dynamic-plugin-sdk';
 import { Label } from '@patternfly/react-core';
 
+import { SimpleNICPresentation } from '../../utils/types';
 import { getConfigInterfaceState, getRuntimeInterfaceState } from '../../utils/utils';
 
 import NetworkInterfaceActions from './NetworkInterfaceActions';
-import { SimpeNicPresentation } from './NetworkInterfaceList';
 
 export type NetworkInterfaceRowProps = {
-  obj: SimpeNicPresentation;
+  obj: SimpleNICPresentation;
 };
 
 const NetworkInterfaceRow: FC<
   RowProps<
-    SimpeNicPresentation,
+    SimpleNICPresentation,
     {
       vm: V1VirtualMachine;
       vmi: V1VirtualMachineInstance;

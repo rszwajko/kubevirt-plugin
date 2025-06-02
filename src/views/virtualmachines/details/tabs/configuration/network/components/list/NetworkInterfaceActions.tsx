@@ -19,7 +19,7 @@ import {
   DropdownList,
 } from '@patternfly/react-core';
 import {
-  getConfigInterfaceStateFromVm,
+  getConfigInterfaceStateFromVM,
   setNetworkInterfaceState,
 } from '@virtualmachines/details/tabs/configuration/network/utils/utils';
 import { isRunning } from '@virtualmachines/utils';
@@ -44,7 +44,7 @@ const NetworkInterfaceActions: FC<NetworkInterfaceActionsProps> = ({
 
   const isHotPlugNIC = Boolean(nicPresentation?.iface?.bridge);
 
-  const interfaceState = getConfigInterfaceStateFromVm(vm, nicName);
+  const interfaceState = getConfigInterfaceStateFromVM(vm, nicName);
 
   const isInterfaceMissing = !getNetworkInterface(vm, nicName);
 

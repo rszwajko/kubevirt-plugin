@@ -14,8 +14,8 @@ import { NetworkPresentation } from '@kubevirt-utils/resources/vm/utils/network/
 import { isEmpty } from '@kubevirt-utils/utils/utils';
 import { ButtonVariant, Dropdown, DropdownItem, DropdownList } from '@patternfly/react-core';
 import {
-  getConfigInterfaceStateFromVm,
-  isSRIOVInterfaceByVM,
+  getConfigInterfaceStateFromVM,
+  isSRIOVNetworkByVM,
 } from '@virtualmachines/details/tabs/configuration/network/utils/utils';
 
 import WizardEditNetworkInterfaceModal from '../modal/WizardEditNetworkInterfaceModal';
@@ -41,8 +41,8 @@ const NetworkInterfaceActions: FC<NetworkInterfaceActionsProps> = ({
   const label = t('Delete NIC?');
   const editBtnText = t('Edit');
   const submitBtnText = t('Delete');
-  const interfaceState = getConfigInterfaceStateFromVm(vm, nicName);
-  const isSRIOVIface = isSRIOVInterfaceByVM(vm, nicName);
+  const interfaceState = getConfigInterfaceStateFromVM(vm, nicName);
+  const isSRIOVIface = isSRIOVNetworkByVM(vm, nicName);
 
   const onEditModalOpen = () => {
     createModal(({ isOpen, onClose }) => (

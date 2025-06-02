@@ -2,7 +2,6 @@ import React, { FC, useMemo } from 'react';
 
 import { V1VirtualMachine, V1VirtualMachineInstance } from '@kubevirt-ui/kubevirt-api/kubevirt';
 import { getAutoAttachPodInterface } from '@kubevirt-utils/resources/vm';
-import { NetworkPresentation } from '@kubevirt-utils/resources/vm/utils/network/constants';
 import { getPrintableNetworkInterfaceType } from '@kubevirt-utils/resources/vm/utils/network/selectors';
 import { getInterfacesAndNetworks } from '@kubevirt-utils/resources/vm/utils/network/utils';
 import { isEmpty } from '@kubevirt-utils/utils/utils';
@@ -14,6 +13,7 @@ import {
 
 import useNetworkColumns from '../../hooks/useNetworkColumns';
 import useNetworkRowFilters from '../../hooks/useNetworkRowFilters';
+import { SimpleNICPresentation } from '../../utils/types';
 import {
   isInterfaceEphemeral,
   isPendingHotPlugNIC,
@@ -29,23 +29,10 @@ type NetworkInterfaceTableProps = {
   vmi: V1VirtualMachineInstance;
 };
 
-export type SimpeNicPresentation = {
-  config?: NetworkPresentation;
-  configLinkState?: string;
-  iface: { macAddress?: string; model?: string };
-  interfaceName?: string;
-  isInterfaceEphemeral: boolean;
-  isPending: boolean;
-  isSRIOV: boolean;
-  network: { multus?: { networkName: string }; name: string };
-  runtimeLinkState?: string;
-  type: string;
-};
-
 const NetworkInterfaceList: FC<NetworkInterfaceTableProps> = ({ vm, vmi }) => {
   const filters = useNetworkRowFilters();
 
-  const networkInterfacesData: SimpeNicPresentation[] = useMemo(
+  const networkInterfacesData: SimpleNICPresentation[] = useMemo(
     () =>
       getInterfacesAndNetworks(vm, vmi)
         .map(({ config, runtime }) => ({

@@ -184,7 +184,6 @@ export const universalComparator = (a: any, b: any, locale?: string): number =>
 
 /**
  * Uses native string localCompare method with numeric option enabled.
- *
  * @param a -
  * @param b -
  * @param locale to be used by string compareFn
