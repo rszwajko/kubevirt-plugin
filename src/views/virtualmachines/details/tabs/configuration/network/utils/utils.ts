@@ -89,21 +89,21 @@ export const isPendingRemoval = (
   return interfaceNotFound(vm, nicName) && isActiveOnGuest(vmi, nicName, isVMRunning);
 };
 
-export const isSRIOVInterfaceByVM = (vm: V1VirtualMachine, nicName: string) => {
+export const isSRIOVNetworkByVM = (vm: V1VirtualMachine, nicName: string) => {
   const iface = getNetworkInterface(vm, nicName);
   return interfaceTypesProxy[getNetworkInterfaceType(iface)] === interfaceTypesProxy.sriov;
 };
 
 export const isSRIOVInterface = <T extends { sriov?: object }>(iface: T) => !!iface?.sriov;
 
-export const getConfigInterfaceStateFromVm = (
+export const getConfigInterfaceStateFromVM = (
   vm: V1VirtualMachine,
   nicName: string,
 ): NetworkInterfaceState =>
   getConfigInterfaceState(
     getNetworkInterface(vm, nicName),
     getNetworkInterfaceState(vm, nicName),
-    isSRIOVInterfaceByVM(vm, nicName),
+    isSRIOVNetworkByVM(vm, nicName),
   );
 
 export const getConfigInterfaceState = (

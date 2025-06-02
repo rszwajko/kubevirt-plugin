@@ -10,24 +10,8 @@ import {
   isSRIOVInterface,
 } from '@virtualmachines/details/tabs/configuration/network/utils/utils';
 
-export const compareWitDirection = (direction: SortByDirection, a: any, b: any) =>
+export const compareWithDirection = (direction: SortByDirection, a: any, b: any) =>
   sortByDirection(universalComparator, direction)(a, b);
-
-export const NAME = <T extends { network: { name: string } }>(t: TFunction): TableColumn<T> => ({
-  id: 'name',
-  sort: (data, direction) =>
-    data.sort((a, b) => compareWitDirection(direction, a?.network?.name, b?.network?.name)),
-  title: t('Name'),
-  transforms: [sortable],
-});
-
-export const MODEL = <T extends { iface: { model?: string } }>(t: TFunction): TableColumn<T> => ({
-  id: 'model',
-  sort: (data, direction) =>
-    data.sort((a, b) => compareWitDirection(direction, a?.iface?.model, b?.iface?.model)),
-  title: t('Model'),
-  transforms: [sortable],
-});
 
 export const toNetworkNameLabel = <
   T extends { network: { multus?: { networkName: string }; pod?: unknown } },
@@ -36,25 +20,41 @@ export const toNetworkNameLabel = <
   nic: T,
 ) => (nic?.network?.pod ? t('Pod networking') : nic?.network?.multus?.networkName);
 
-export const NETWORK = <T extends { network: { multus?: { networkName: string }; pod?: unknown } }>(
+export const Name = <T extends { network: { name: string } }>(t: TFunction): TableColumn<T> => ({
+  id: 'name',
+  sort: (data, direction) =>
+    data.sort((a, b) => compareWithDirection(direction, a?.network?.name, b?.network?.name)),
+  title: t('Name'),
+  transforms: [sortable],
+});
+
+export const Model = <T extends { iface: { model?: string } }>(t: TFunction): TableColumn<T> => ({
+  id: 'model',
+  sort: (data, direction) =>
+    data.sort((a, b) => compareWithDirection(direction, a?.iface?.model, b?.iface?.model)),
+  title: t('Model'),
+  transforms: [sortable],
+});
+
+export const Network = <T extends { network: { multus?: { networkName: string }; pod?: unknown } }>(
   t: TFunction,
 ): TableColumn<T> => ({
   id: 'network',
   sort: (data, direction) =>
     data.sort((a, b) =>
-      compareWitDirection(direction, toNetworkNameLabel<T>(t, a), toNetworkNameLabel<T>(t, b)),
+      compareWithDirection(direction, toNetworkNameLabel<T>(t, a), toNetworkNameLabel<T>(t, b)),
     ),
   title: t('Network'),
   transforms: [sortable],
 });
 
-export const STATE = <T extends { iface: { sriov?: object; state?: string } }>(
+export const State = <T extends { iface: { sriov?: object; state?: string } }>(
   t: TFunction,
 ): TableColumn<T> => ({
   id: 'state',
   sort: (data, direction) =>
     data.sort((a, b) =>
-      compareWitDirection(
+      compareWithDirection(
         direction,
         getConfigInterfaceState(a?.iface, a?.iface?.state, isSRIOVInterface(a?.iface)),
         getConfigInterfaceState(b?.iface, b?.iface?.state, isSRIOVInterface(b?.iface)),
@@ -64,24 +64,26 @@ export const STATE = <T extends { iface: { sriov?: object; state?: string } }>(
   transforms: [sortable],
 });
 
-export const TYPE = (t: TFunction): TableColumn<NetworkPresentation> => ({
+export const Type = (t: TFunction): TableColumn<NetworkPresentation> => ({
   id: 'type',
   sort: sortNICs,
   title: t('Type'),
   transforms: [sortable],
 });
 
-export const MAC_ADDRESS = <T extends { iface: { macAddress?: string } }>(
+export const MacAddress = <T extends { iface: { macAddress?: string } }>(
   t: TFunction,
 ): TableColumn<T> => ({
   id: 'macAddress',
   sort: (data, direction) =>
-    data.sort((a, b) => compareWitDirection(direction, a?.iface?.macAddress, b?.iface?.macAddress)),
+    data.sort((a, b) =>
+      compareWithDirection(direction, a?.iface?.macAddress, b?.iface?.macAddress),
+    ),
   title: t('MAC address'),
   transforms: [sortable],
 });
 
-export const ACTIONS = {
+export const Actions = {
   id: '',
   props: { className: 'pf-v6-c-table__action' },
   title: '',

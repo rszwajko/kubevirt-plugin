@@ -16,7 +16,7 @@ import { generatePrettyName } from '@kubevirt-utils/utils/utils';
 import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
 import { ExpandableSection, Form } from '@patternfly/react-core';
 import {
-  getConfigInterfaceStateFromVm,
+  getConfigInterfaceStateFromVM,
   isLinkStateEditable,
 } from '@virtualmachines/details/tabs/configuration/network/utils/utils';
 import { isRunning } from '@virtualmachines/utils';
@@ -79,7 +79,7 @@ const NetworkInterfaceModal: FC<NetworkInterfaceModalProps> = ({
   const [interfaceMACAddress, setInterfaceMACAddress] = useState(iface?.macAddress);
   const [macError, setMacError] = useState<boolean>(false);
   const [interfaceLinkState, setInterfaceLinkState] = useState<NetworkInterfaceState>(
-    !network ? NetworkInterfaceState.UP : getConfigInterfaceStateFromVm(vm, nicName),
+    !network ? NetworkInterfaceState.UP : getConfigInterfaceStateFromVM(vm, nicName),
   );
   const [isExpanded, setIsExpanded] = useState(false);
 
