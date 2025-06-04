@@ -54,7 +54,7 @@ const NetworkInterfaceList: FC<NetworkInterfaceTableProps> = ({ vm, vmi }) => {
             name: runtime?.network?.name ?? config?.network?.name,
             pod: runtime?.network?.pod ?? config?.network?.pod,
           },
-          runtimeLinkState: (runtime?.status as any)?.linkState,
+          runtimeLinkState: runtime?.status?.linkState,
           type: getPrintableNetworkInterfaceType(runtime?.iface ?? config?.iface),
         }))
         .map((obj) => ({ ...obj, metadata: { name: obj.network?.name } })),

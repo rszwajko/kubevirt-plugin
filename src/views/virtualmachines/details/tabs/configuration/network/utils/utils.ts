@@ -126,16 +126,6 @@ export const getRuntimeInterfaceState = (simpleIfaceState: string): NetworkInter
   return isNetworkInterfaceState(simpleIfaceState) ? simpleIfaceState : NetworkInterfaceState.NONE;
 };
 
-export const getAggregatedInterfaceState = (
-  currentSate: NetworkInterfaceState,
-  desiredState: NetworkInterfaceState,
-) =>
-  currentSate === NetworkInterfaceState.NONE &&
-  (desiredState === NetworkInterfaceState.ABSENT ||
-    desiredState === NetworkInterfaceState.UNSUPPORTED)
-    ? desiredState
-    : currentSate;
-
 export const setNetworkInterfaceState = (
   vm: V1VirtualMachine,
   nicName: string,

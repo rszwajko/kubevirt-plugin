@@ -60,4 +60,4 @@ export const getNetworkInterface = (
 export const getNetworkInterfaceState = (
   vm: V1VirtualMachineInstance,
   interfaceName: string,
-): string | undefined => (getNetworkInterface(vm, interfaceName) as any)?.link_state;
+): string | undefined => getNetworkInterface(vm, interfaceName)?.linkState;
