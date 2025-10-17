@@ -7,6 +7,7 @@ export const FSTOP = 'vm-action-force-stop';
 export const PAUSE = 'vm-action-pause';
 export const UNPAUSE = 'vm-action-unpause';
 export const CLONE = 'vm-action-clone';
+export const CONTROL_MENU = 'control-menu';
 export const MIGRATE_MENU = '[data-test-id="migration-menu"]';
 export const MIGRATE_COMPUTE = 'vm-action-migrate';
 export const MIGRATE_STORAGE = '[data-test-id="vm-migrate-storage"]';
@@ -90,6 +91,7 @@ export const action = {
     } else {
       cy.byButtonText('Actions').click();
     }
+    cy.byLegacyTestID(CONTROL_MENU).click();
     cy.byLegacyTestID(FSTOP).click();
   },
   migrate: (vmName: string, onList = true) => {
@@ -108,6 +110,7 @@ export const action = {
     } else {
       cy.byButtonText('Actions').click();
     }
+    cy.byLegacyTestID(CONTROL_MENU).click();
     cy.byLegacyTestID(PAUSE).click();
   },
   restart: (vmName: string, onList = true) => {
@@ -116,7 +119,7 @@ export const action = {
     } else {
       cy.byButtonText('Actions').click();
     }
-    cy.wait(3000);
+    cy.byLegacyTestID(CONTROL_MENU).click();
     cy.byLegacyTestID(RESTART).click();
   },
   start: (vmName: string, onList = true) => {
@@ -125,6 +128,7 @@ export const action = {
     } else {
       cy.byButtonText('Actions').click();
     }
+    cy.byLegacyTestID(CONTROL_MENU).click();
     cy.byLegacyTestID(START).click();
   },
   stop: (vmName: string, onList = true) => {
@@ -133,7 +137,7 @@ export const action = {
     } else {
       cy.byButtonText('Actions').click();
     }
-    cy.wait(5000);
+    cy.byLegacyTestID(CONTROL_MENU).click();
     cy.byLegacyTestID(STOP).click();
   },
   unpause: (vmName: string, onList = true) => {
@@ -142,6 +146,7 @@ export const action = {
     } else {
       cy.byButtonText('Actions').click();
     }
+    cy.byLegacyTestID(CONTROL_MENU).click();
     cy.byLegacyTestID(UNPAUSE).click();
   },
 };
