@@ -28,12 +28,7 @@ const GroupMenuContent: FC<GroupMenuContentProps & { checkAccess: CheckAccess }>
     <Divider />
     <MenuGroup label={option.label}>
       <MenuList>
-        <ActionMenuContent
-          checkAccess={checkAccess}
-          focusItem={option.children[0]}
-          onClick={onClick}
-          options={option.children}
-        />
+        <ActionMenuContent checkAccess={checkAccess} onClick={onClick} options={option.children} />
       </MenuList>
     </MenuGroup>
   </>
@@ -52,7 +47,6 @@ const SubMenuContent: FC<GroupMenuContentProps & { checkAccess: CheckAccess }> =
           <MenuList>
             <ActionMenuContent
               checkAccess={checkAccess}
-              // focusItem={option.children?.[0]}
               onClick={onClick}
               options={option.children}
             />
@@ -73,12 +67,7 @@ type ActionMenuContentProps = {
   options: MenuOption[];
 };
 
-const ActionMenuContent: FC<ActionMenuContentProps> = ({
-  checkAccess,
-  focusItem,
-  onClick,
-  options,
-}) => {
+const ActionMenuContent: FC<ActionMenuContentProps> = ({ checkAccess, onClick, options }) => {
   const sortedOptions = orderExtensionBasedOnInsertBeforeAndAfter(options);
   return (
     <>
@@ -107,7 +96,6 @@ const ActionMenuContent: FC<ActionMenuContentProps> = ({
             return (
               <ActionMenuItem
                 action={option as Action}
-                autoFocus={focusItem ? option === focusItem : undefined}
                 checkAccess={checkAccess}
                 key={option.id}
                 onClick={onClick}

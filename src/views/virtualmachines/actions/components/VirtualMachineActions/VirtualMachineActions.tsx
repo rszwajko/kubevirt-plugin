@@ -23,13 +23,14 @@ const VirtualMachineActions: FC<VirtualMachinesInstanceActionsProps> = ({
   isKebabToggle,
   vm,
 }) => {
-  const stableOptions = useMemo(() => createLocalMenuOptions(actions), [actions]);
+  const localOptions = useMemo(() => createLocalMenuOptions(actions), [actions]);
+  const context = useMemo(() => ({ [VirtualMachineModelRef]: vm }), [vm]);
   return (
     <LazyActionMenu
       checkAccessDelegate={checkAccessForFleet}
-      context={{ [VirtualMachineModelRef]: vm }}
+      context={context}
       key={vm?.metadata?.name}
-      localOptions={stableOptions}
+      localOptions={localOptions}
       variant={isKebabToggle ? ActionMenuVariant.KEBAB : ActionMenuVariant.DROPDOWN}
     />
   );
