@@ -20,7 +20,6 @@ import { CheckAccess } from './LazyActionMenu';
 
 export const checkAccessForFleet = (
   accessReview: AccessReviewResourceAttributes | FleetAccessReviewResourceAttributes,
-  _impersonate: ImpersonateKind,
 ) => {
   const {
     cluster = '',
@@ -57,18 +56,16 @@ export const useCheckAccess = (
   useEffect(() => {
     checkAccessDelegate(resourceAttributes, impersonate)
       .then((result: SelfSubjectAccessReviewKind) => {
-        setAllowed(result.status.allowed);
-        setLoading(false);
+        setAllowed(Boolean(result?.status?.allowed));
       })
       .catch((e) => {
-        // eslint-disable-next-line no-console
         kubevirtConsole.warn('SelfSubjectAccessReview failed', e);
         // Default to enabling the action if the access review fails so that we
         // don't incorrectly block users from actions they can perform. The server
         // still enforces access control.
         setAllowed(true);
-        setLoading(false);
-      });
+      })
+      .finally(() => setLoading(false));
   }, [resourceAttributes, impersonate, checkAccessDelegate]);
   return [isAllowed, loading];
 };
@@ -95,7 +92,7 @@ export const createLocalMenuOptions = (actions: ActionDropdownItemType[]): MenuO
  * @returns merged, de-duplicated list (on the same level)
  */
 export const mergeOptions = (options: MenuOption[]): MenuOption[] =>
-  // use array based dictionary to guaratnee the order
+  // use array based dictionary to guarantee the order
   // first encountered is first in the results
   options
     .reduce((acc, opt) => {

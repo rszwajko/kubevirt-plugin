@@ -1,5 +1,4 @@
-/* eslint-disable no-nested-ternary */
-import React, { ComponentType, FC, KeyboardEventHandler, useCallback } from 'react';
+import React, { FC, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import isFunction from 'lodash/isFunction';
@@ -8,7 +7,7 @@ import isObject from 'lodash/isObject';
 import { Action } from '@openshift-console/dynamic-plugin-sdk';
 import { impersonateStateToProps } from '@openshift-console/dynamic-plugin-sdk/lib/app/core/reducers/coreSelectors';
 import { ImpersonateKind } from '@openshift-console/dynamic-plugin-sdk/lib/app/redux-types';
-import { DropdownItemProps, KeyTypes, MenuItem, Tooltip } from '@patternfly/react-core';
+import { MenuItem, Tooltip } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 
 import { CheckAccess } from './LazyActionMenu';
@@ -17,18 +16,14 @@ import { useCheckAccess } from './overrides';
 export type ActionMenuItemProps = {
   action: Action;
   autoFocus?: boolean;
-  component?: ComponentType<DropdownItemProps>;
   onClick?: () => void;
-  onEscape?: () => void;
 };
 
 const ActionItem: FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
   action,
   autoFocus,
-  component,
   isAllowed,
   onClick,
-  onEscape,
 }) => {
   const { cta, description, disabled, icon, label } = action;
   const { external, href } = cta as { external?: boolean; href: string };
@@ -41,27 +36,14 @@ const ActionItem: FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
       event.preventDefault();
       if (isFunction(cta)) {
         cta();
-      } else if (isObject(cta)) {
-        if (!cta.external) {
-          navigate(cta.href);
-        }
+      } else if (isObject(cta) && !cta.external) {
+        navigate(cta.href);
       }
-      onClick && onClick();
+      onClick?.();
       event.stopPropagation();
     },
     [cta, onClick, navigate],
   );
-
-  const handleKeyDown: KeyboardEventHandler<HTMLLIElement> = (event) => {
-    if (event.key === KeyTypes.Escape) {
-      onEscape && onEscape();
-    }
-
-    if (event.key === KeyTypes.Enter) {
-      handleClick(event);
-    }
-  };
-  const Component = component ?? MenuItem;
 
   const props = {
     autoFocus,
@@ -72,18 +54,10 @@ const ActionItem: FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
     isDisabled,
     onClick: handleClick,
     translate: 'no' as const,
-  };
-
-  const extraProps = {
-    onKeyDown: handleKeyDown,
     ...(external ? { isExternalLink: external, to: href } : {}),
   };
 
-  return (
-    <Component {...props} {...(component ? {} : extraProps)}>
-      {label}
-    </Component>
-  );
+  return <MenuItem {...props}>{label}</MenuItem>;
 };
 
 const AccessReviewActionItem = connect(impersonateStateToProps)(
@@ -96,19 +70,21 @@ const AccessReviewActionItem = connect(impersonateStateToProps)(
 
 const ActionMenuItem: FC<ActionMenuItemProps & { checkAccess: CheckAccess }> = (props) => {
   const { action } = props;
-  let item;
+  const item = action.accessReview ? (
+    <AccessReviewActionItem {...props} />
+  ) : (
+    <ActionItem {...props} isAllowed />
+  );
 
-  if (action.accessReview) {
-    item = <AccessReviewActionItem {...props} />;
-  } else {
-    item = <ActionItem {...props} isAllowed />;
+  if (action.tooltip) {
+    return (
+      <Tooltip content={action.tooltip} position="left">
+        {item}
+      </Tooltip>
+    );
   }
 
-  return action.tooltip ? (
-    <Tooltip content={action.tooltip} position="left">
-      {item}
-    </Tooltip>
-  ) : action.disabled && action.disabledTooltip ? (
+  return action.disabled && action.disabledTooltip ? (
     <Tooltip content={action.disabledTooltip} position="left">
       <div>{item}</div>
     </Tooltip>

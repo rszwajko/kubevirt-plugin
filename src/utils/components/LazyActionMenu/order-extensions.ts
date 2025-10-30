@@ -1,49 +1,53 @@
-/* eslint-disable no-nested-ternary */
-/* eslint-disable perfectionist/sort-interfaces */
-interface ItemsToSort {
+import partition from 'lodash/partition';
+
+type ItemsToSort = {
   id: string;
-  insertBefore?: string | string[];
   insertAfter?: string | string[];
-}
+  insertBefore?: string | string[];
+};
 
-const toArray = (val) => (val ? (Array.isArray(val) ? val : [val]) : []);
+export const toArray = <T>(value: T | T[]): T[] => {
+  if (value) {
+    return Array.isArray(value) ? value : [value];
+  }
+  return [];
+};
 
-const itemDependsOnItem = <T extends ItemsToSort>(s1: T, s2: T): boolean => {
-  if (!s1.insertBefore && !s1.insertAfter) {
+export const itemDependsOnItem = <T extends ItemsToSort>(item: T, other: T): boolean => {
+  if (!item.insertBefore && !item.insertAfter) {
     return false;
   }
-  const before = toArray(s1.insertBefore);
-  const after = toArray(s1.insertAfter);
-  return before.includes(s2.id) || after.includes(s2.id);
+  const before = toArray(item.insertBefore);
+  const after = toArray(item.insertAfter);
+  return before.includes(other.id) || after.includes(other.id);
 };
 
-const isPositioned = <T extends ItemsToSort>(item: T, allItems: T[]): boolean =>
-  !!allItems.find((i) => itemDependsOnItem<T>(item, i));
+export const isPositioned = <T extends ItemsToSort>(item: T, allItems: T[]): boolean =>
+  !!allItems.find((other) => itemDependsOnItem<T>(item, other));
 
-const findIndexForItem = <T extends ItemsToSort>(item: T, currentItems: T[]): number => {
+export const findIndexForItem = <T extends ItemsToSort>(item: T, currentItems: T[]): number => {
   const { insertAfter, insertBefore } = item;
-  let index = -1;
-  const before = toArray(insertBefore);
-  const after = toArray(insertAfter);
-  let count = 0;
-  while (count < before.length && index < 0) {
-    // eslint-disable-next-line no-loop-func
-    index = currentItems.findIndex((i) => i.id === before[count]);
-    count++;
-  }
-  count = 0;
-  while (count < after.length && index < 0) {
-    // eslint-disable-next-line no-loop-func
-    index = currentItems.findIndex((i) => i.id === after[count]);
+  const beforeIds = toArray(insertBefore);
+  const afterIds = toArray(insertAfter);
+
+  for (const id of beforeIds) {
+    const index = currentItems.findIndex((other) => other.id === id);
     if (index >= 0) {
-      index += 1;
+      return index;
     }
-    count++;
   }
-  return index;
+
+  for (const id of afterIds) {
+    const index = currentItems.findIndex((other) => other.id === id);
+    if (index >= 0) {
+      return index + 1;
+    }
+  }
+
+  return -1;
 };
 
-const insertItem = <T extends ItemsToSort>(item: T, currentItems: T[]): void => {
+export const insertItem = <T extends ItemsToSort>(item: T, currentItems: T[]): void => {
   const index = findIndexForItem<T>(item, currentItems);
   if (index >= 0) {
     currentItems.splice(index, 0, item);
@@ -52,7 +56,7 @@ const insertItem = <T extends ItemsToSort>(item: T, currentItems: T[]): void => 
   }
 };
 
-const insertPositionedItems = <T extends ItemsToSort>(
+export const insertPositionedItems = <T extends ItemsToSort>(
   insertItems: T[],
   currentItems: T[],
 ): void => {
@@ -60,8 +64,9 @@ const insertPositionedItems = <T extends ItemsToSort>(
     return;
   }
 
-  const sortedItems = insertItems.filter((item) => !isPositioned<T>(item, insertItems));
-  const positionedItems = insertItems.filter((item) => isPositioned<T>(item, insertItems));
+  const [positionedItems, sortedItems] = partition(insertItems, (item) =>
+    isPositioned<T>(item, insertItems),
+  );
 
   if (sortedItems.length === 0) {
     // Circular dependencies
@@ -79,8 +84,7 @@ export const orderExtensionBasedOnInsertBeforeAndAfter = <T extends ItemsToSort>
   if (!items || !items.length) {
     return [];
   }
-  const sortedItems = items.filter((item) => !isPositioned<T>(item, items));
-  const positionedItems = items.filter((item) => isPositioned<T>(item, items));
+  const [positionedItems, sortedItems] = partition(items, (item) => isPositioned<T>(item, items));
   insertPositionedItems<T>(positionedItems, sortedItems);
   return sortedItems;
 };

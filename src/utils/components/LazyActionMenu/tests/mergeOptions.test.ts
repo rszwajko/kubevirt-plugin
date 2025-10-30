@@ -1,53 +1,38 @@
 import { mergeOptions } from '../overrides';
 
+const action = (id: number) => ({ cta: { href: '' }, id: String(id) });
+
 describe('mergeOptions', () => {
   test('empty list', () => {
     expect(mergeOptions([])).toEqual([]);
   });
   test('one action, one option', () => {
     expect(
-      mergeOptions([
-        { cta: { href: '' }, id: '5' },
-        { children: [{ cta: { href: '' }, id: '12' }], id: '1', label: 'first one' },
-      ]),
-    ).toEqual([
-      { cta: { href: '' }, id: '5' },
-      { children: [{ cta: { href: '' }, id: '12' }], id: '1', label: 'first one' },
-    ]);
+      mergeOptions([action(5), { children: [action(12)], id: '1', label: 'first one' }]),
+    ).toEqual([action(5), { children: [action(12)], id: '1', label: 'first one' }]);
   });
-  test('dropping duplicated actions (on the same level', () => {
-    expect(
-      mergeOptions([
-        { cta: { href: '' }, id: '5' },
-        { cta: { href: '' }, id: '5' },
-      ]),
-    ).toEqual([{ cta: { href: '' }, id: '5' }]);
+  test('dropping duplicated actions (on the same level)', () => {
+    expect(mergeOptions([action(5), action(5)])).toEqual([action(5)]);
   });
   test('stable grouping', () => {
     expect(
       mergeOptions([
         { children: [], id: '2', label: 'first two' },
-        { cta: { href: '' }, id: '5' },
+        action(5),
         { children: [], id: '2', label: 'second two' },
       ]),
-    ).toEqual([
-      { children: [], id: '2', label: 'first two' },
-      { cta: { href: '' }, id: '5' },
-    ]);
+    ).toEqual([{ children: [], id: '2', label: 'first two' }, action(5)]);
   });
   test('1 level of options', () => {
     expect(
       mergeOptions([
-        { children: [{ cta: { href: '' }, id: '12' }], id: '1', label: 'first one' },
+        { children: [action(12)], id: '1', label: 'first one' },
         { children: [], id: '2', label: 'first two' },
-        { children: [{ cta: { href: '' }, id: '13' }], id: '1', label: 'second one' },
+        { children: [action(13)], id: '1', label: 'second one' },
       ]),
     ).toEqual([
       {
-        children: [
-          { cta: { href: '' }, id: '12' },
-          { cta: { href: '' }, id: '13' },
-        ],
+        children: [action(12), action(13)],
         id: '1',
         label: 'first one',
       },
@@ -59,19 +44,13 @@ describe('mergeOptions', () => {
     expect(
       mergeOptions([
         {
-          children: [
-            { cta: { href: '' }, id: '7' },
-            { children: [{ cta: { href: '' }, id: '9' }], id: '8', label: 'first eight' },
-          ],
+          children: [action(7), { children: [action(9)], id: '8', label: 'first eight' }],
           id: '6',
           label: 'first six',
         },
-        { cta: { href: '' }, id: '5' },
+        action(5),
         {
-          children: [
-            { children: [{ cta: { href: '' }, id: '10' }], id: '8', label: 'second eight' },
-            { cta: { href: '' }, id: '11' },
-          ],
+          children: [{ children: [action(10)], id: '8', label: 'second eight' }, action(11)],
           id: '6',
           label: 'second six',
         },
@@ -79,21 +58,18 @@ describe('mergeOptions', () => {
     ).toEqual([
       {
         children: [
-          { cta: { href: '' }, id: '7' },
+          action(7),
           {
-            children: [
-              { cta: { href: '' }, id: '9' },
-              { cta: { href: '' }, id: '10' },
-            ],
+            children: [action(9), action(10)],
             id: '8',
             label: 'first eight',
           },
-          { cta: { href: '' }, id: '11' },
+          action(11),
         ],
         id: '6',
         label: 'first six',
       },
-      { cta: { href: '' }, id: '5' },
+      action(5),
     ]);
   });
 });
