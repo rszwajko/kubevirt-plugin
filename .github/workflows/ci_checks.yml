@@ -7,10 +7,11 @@ on:
   push:
     branches:
       - main
-
 jobs:
   i18n:
     name: i18n
+    permissions:
+      packages: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -19,9 +20,13 @@ jobs:
       - name: Setup Yarn
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
           cache: 'yarn'
+          registry-url: 'https://npm.pkg.github.com'
+
       - run: yarn install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN:: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check i18n
         shell: bash
@@ -44,9 +49,13 @@ jobs:
       - name: Setup Yarn
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
           cache: 'yarn'
+          registry-url: 'https://npm.pkg.github.com'
+
       - run: yarn install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Lint
         run: yarn lint:fix
@@ -67,9 +76,13 @@ jobs:
       - name: Setup Yarn
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
           cache: 'yarn'
+          registry-url: 'https://npm.pkg.github.com'
+
       - run: yarn install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Unit Tests
         run: yarn test-cov
