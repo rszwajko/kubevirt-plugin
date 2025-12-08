@@ -35,6 +35,11 @@ export const getACMVMSearchURL = (): string =>
 export const getACMVMListNamespacesURL = (cluster: string, namespace: string): string =>
   `/k8s/cluster/${cluster}/ns/${namespace}/${KUBEVIRT_VM_PATH}`;
 
+// based on dns1123LabelRegexp
+const catalogWithNs = new RegExp('/ns/[-a-z0-9]+/catalog');
+export const isCatalogURL = (path: string = '') =>
+  path.includes(`${ALL_NAMESPACES}/catalog`) || !!path.match(catalogWithNs);
+
 export const getCatalogURL = (cluster: string, namespace?: string): string => {
   const namespacePath = isAllNamespaces(namespace) ? ALL_NAMESPACES : `ns/${namespace}`;
 
