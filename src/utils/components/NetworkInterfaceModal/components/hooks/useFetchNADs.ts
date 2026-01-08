@@ -12,6 +12,12 @@ import { NetworkAttachmentDefinition } from './types';
 import useNADListPermissions from './useNADListPermissions';
 import { resources, watchResourceIfAllowed } from './utils';
 
+export const GLOBAL_NAD_NAMESPACES = [
+  DEFAULT_NAMESPACE,
+  OPENSHIFT_MULTUS_NS,
+  OPENSHIFT_SRIOV_NETWORK_OPERATOR_NS,
+];
+
 export const useFetchNADs = (
   namespace: string,
   cluster: string,
@@ -26,9 +32,7 @@ export const useFetchNADs = (
         isList: true,
         namespace: namespace,
       },
-      ![DEFAULT_NAMESPACE, OPENSHIFT_MULTUS_NS, OPENSHIFT_SRIOV_NETWORK_OPERATOR_NS].includes(
-        namespace,
-      ),
+      !GLOBAL_NAD_NAMESPACES.includes(namespace),
       cluster,
     ),
   );
