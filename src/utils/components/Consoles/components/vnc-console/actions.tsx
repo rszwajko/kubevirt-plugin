@@ -27,11 +27,10 @@ import {
   F8,
   F9,
   ONE,
-  ScanCodeName,
   TWO,
-  typeAndWait,
-} from './utils/util';
-import { RFB } from './utils/VncConsoleTypes';
+} from './utils/constants';
+import { typeAndWait } from './utils/util';
+import { RFB, ScanCodeName } from './utils/VncConsoleTypes';
 import UnsupportedCharModal from './UnsupportedCharModal';
 
 const canExecuteCommands = (rfb: RFB): boolean =>
