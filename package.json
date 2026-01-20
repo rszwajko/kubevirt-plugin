@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@kubev2v/types": "^0.0.22",
+    "@kubevirt-ui-ext/vnc-keymaps": "1.0.5",
     "@novnc/novnc": "^1.5.0",
     "@patternfly/quickstarts": "6.1.0",
     "@patternfly/react-catalog-view-extension": "^6.1.0",
