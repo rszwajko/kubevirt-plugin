@@ -12,7 +12,6 @@ import useK8sWatchData from '@multicluster/hooks/useK8sWatchData';
 import { Bullseye, Spinner } from '@patternfly/react-core';
 
 import ErrorAlert from '../ErrorAlert/ErrorAlert';
-import { ModalProvider, useModalValue } from '../ModalProvider/ModalProvider';
 
 import { KUBEVIRT_UI_VNC_LOG_LEVEL_LABEL } from './components/vnc-console/utils/constants';
 import { isVncLogLevel } from './components/vnc-console/utils/util';
@@ -29,7 +28,6 @@ const ConsoleStandAlone: FC = () => {
     namespace: ns,
   });
   const { vmi, vmiLoaded, vmiLoadError } = useVMI(name, ns, cluster);
-  const value = useModalValue();
 
   if (!vmi && vmiLoadError) {
     return <ErrorAlert error={vmiLoadError} />;
@@ -45,20 +43,18 @@ const ConsoleStandAlone: FC = () => {
     );
   const logLevelLabel = vm && getLabel(vm, KUBEVIRT_UI_VNC_LOG_LEVEL_LABEL);
   return (
-    <ModalProvider value={value}>
-      <Consoles
-        consoleContainerClass="console-container-stand-alone"
-        isHeadlessMode={isHeadlessMode(vmi)}
-        isStandAlone
-        isVmRunning={!vmi}
-        isWindowsVM={isWindows(vmi)}
-        path={getConsoleBasePath({ apiPath, name, namespace: ns })}
-        vmCluster={cluster}
-        vmName={name}
-        vmNamespace={ns}
-        vncLogLevel={isVncLogLevel(logLevelLabel) ? logLevelLabel : false}
-      />
-    </ModalProvider>
+    <Consoles
+      consoleContainerClass="console-container-stand-alone"
+      isHeadlessMode={isHeadlessMode(vmi)}
+      isStandAlone
+      isVmRunning={!vmi}
+      isWindowsVM={isWindows(vmi)}
+      path={getConsoleBasePath({ apiPath, name, namespace: ns })}
+      vmCluster={cluster}
+      vmName={name}
+      vmNamespace={ns}
+      vncLogLevel={isVncLogLevel(logLevelLabel) ? logLevelLabel : false}
+    />
   );
 };
 

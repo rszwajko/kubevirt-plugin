@@ -14,6 +14,9 @@ export const KUBEVIRT_UI_VNC_LOG_LEVEL_LABEL = 'kubevirt-ui/vnc-log-level';
 
 export const KEYBOARD_DELAY = 50;
 export const LINE_FEED = 10;
+export const HORIZONTAL_TAB = 9;
+export const LATIN_1_FIRST_CHAR = 0x20;
+export const LATIN_1_LAST_CHAR = 0xff;
 
 export const CONTROL_L = 'ControlLeft';
 export const ALT_L = 'AltLeft';

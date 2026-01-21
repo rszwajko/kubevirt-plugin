@@ -1,5 +1,3 @@
-import { kubevirtConsole } from '@kubevirt-utils/utils/utils';
-
 export const isConnectionEncrypted = () => window.location.protocol === 'https:';
 
 export const getConsoleBasePath = ({ apiPath = '/api/kubernetes', name, namespace }) =>
@@ -10,9 +8,11 @@ export const sleep = (ms = 500) => new Promise((resolve) => setTimeout(resolve, 
 export const readFromClipboard = async () =>
   navigator.clipboard
     .readText()
-    .catch((err) => kubevirtConsole.error('Failed to read from clipboard', err));
+    // eslint-disable-next-line no-console
+    .catch((err) => console.error('Failed to read from clipboard', err));
 
 export const writeToClipboard = async (text: string) =>
   navigator.clipboard
     .writeText(text)
-    .catch((err) => kubevirtConsole.error('Failed to write to clipboard', err));
+    // eslint-disable-next-line no-console
+    .catch((err) => console.error('Failed to write to clipboard', err));

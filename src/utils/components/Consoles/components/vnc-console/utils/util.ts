@@ -2,7 +2,6 @@ import { MutableRefObject } from 'react';
 import partition from 'lodash/partition';
 
 import { sleep } from '@kubevirt-utils/components/Consoles/utils/utils';
-import RFBCreate from '@novnc/novnc/lib/rfb';
 import { consoleFetchText } from '@openshift-console/dynamic-plugin-sdk';
 
 import { ConsoleState } from '../../utils/ConsoleConsts';
@@ -27,27 +26,21 @@ export const isConnectableState = (state: ConsoleState) =>
     ConsoleState.session_already_in_use,
   ].includes(state);
 
+// keyboard keys that need to press&hold the shiftKey
+export const isShiftKeyRequired = (char: string): boolean =>
+  !!char?.match(/[A-Z~!@#$%^&*()_+}{|\":?><]/);
+
 /**
- * Add delay to QEMUExtendedKeyEvent
+ * Add delay to sendKey()
  * @param rfb to be used as 'this'
  * @param keysym keysym - see @novnc/novnc/lib/input/keysym
  * @param down true if the key was pressed
- * @param scanCode scanCode - see @novnc/novnc/lib/input/xtscancodes
  */
-export async function typeAndWait(
-  rfb: RFB,
-  keysym: number,
-  down: boolean,
-  scanCode: number,
-): Promise<void> {
-  RFBCreate.messages.QEMUExtendedKeyEvent(rfb._sock, keysym, down, scanCode);
+export async function typeAndWait(rfb: RFB, keysym: number, down: boolean): Promise<void> {
+  rfb.sendKey(keysym, undefined, down);
   // long text is getting truncated without a delay
   await sleep(KEYBOARD_DELAY);
 }
-
-// Example: 10 -> "U+000A"
-export const toUnicodeFormat = (codePoint: number): string =>
-  `U+${codePoint.toString(16).padStart(4, '0').toUpperCase()}`;
 
 export const notifyParentAboutDisconnect = ({
   log,
